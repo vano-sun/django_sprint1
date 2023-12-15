@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 
 
 posts = [
@@ -44,20 +45,26 @@ posts = [
     },
 ]
 
+dic_posts: dict = {
+    post_id['id']: post_id for post_id in posts
+}
+
 
 def index(request):
-    template = 'blog/index.html'
-    context = {'blog': posts[::-1]}
-    return render(request, template, context)
+    context = {'blog': reversed(posts)}
+    return render(request, 'blog/index.html', context)
 
 
 def post_detail(request, pk):
     template = 'blog/detail.html'
-    post = posts[pk]
-    context = {
-        'post': post
-    }
-    return render(request, template, context)
+    if pk <= max(dic_posts.keys()):
+        post = dic_posts[pk]
+        context = {
+            'post': post
+        }
+        return render(request, template, context)
+    else:
+        raise Http404("Запрошенный id не найден")
 
 
 def category_posts(request, category_slug):
@@ -66,4 +73,3 @@ def category_posts(request, category_slug):
         'category_slug': category_slug
     }
     return render(request, template, context)
-# Create your views here.
