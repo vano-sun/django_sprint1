@@ -3,7 +3,7 @@ from typing import Union
 from django.http import Http404
 from django.shortcuts import render
 
-PostData = Union[dict[str, Union[int, str]], None]
+PostData = dict[str, Union[int, str]]
 
 posts: list[PostData] = [
     {
