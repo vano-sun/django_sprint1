@@ -1,8 +1,11 @@
+from typing import Union
+
 from django.http import Http404
 from django.shortcuts import render
 
+PostData = Union[dict[str, Union[int, str]], None]
 
-posts: list[dict] = [
+posts: list[PostData] = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -46,7 +49,7 @@ posts: list[dict] = [
 ]
 
 
-posts_by_id: dict[int, str] = {
+posts_by_id: dict[Union[int, PostData], None] = {
     post_id['id']: post_id for post_id in posts
 }
 
@@ -57,7 +60,7 @@ def index(request):
 
 
 def post_detail(request, pk):
-    if pk not in posts_by_id.keys():
+    if pk not in posts_by_id:
         raise Http404("Запрошенный id не найден")
     post = posts_by_id[pk]
     context = {
