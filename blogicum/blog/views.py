@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from django.http import Http404
+from django.shortcuts import render
 
 
-posts = [
+posts: list[dict] = [
     {
         'id': 0,
         'location': 'Остров отчаянья',
@@ -45,7 +45,8 @@ posts = [
     },
 ]
 
-dic_posts: dict = {
+
+posts_by_id: dict[int, str] = {
     post_id['id']: post_id for post_id in posts
 }
 
@@ -56,20 +57,17 @@ def index(request):
 
 
 def post_detail(request, pk):
-    template = 'blog/detail.html'
-    if pk <= max(dic_posts.keys()):
-        post = dic_posts[pk]
-        context = {
-            'post': post
-        }
-        return render(request, template, context)
-    else:
+    if pk not in posts_by_id.keys():
         raise Http404("Запрошенный id не найден")
+    post = posts_by_id[pk]
+    context = {
+        'post': post
+    }
+    return render(request, 'blog/detail.html', context)
 
 
 def category_posts(request, category_slug):
-    template = 'blog/category.html'
     context = {
         'category_slug': category_slug
     }
-    return render(request, template, context)
+    return render(request, 'blog/category.html', context)
